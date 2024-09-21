@@ -45,3 +45,7 @@ export const removeFromCart = async(uid,pid,reqHeader)=>{
 export const googleRegister = async(user)=>{
     return await commonApi("POST",`${baseurl}/user/googleRegister`,user,"")
 }
+
+export const order= async(id,reqBody,reqHeader)=>{
+    return await commonApi("POST",`${baseurl}/user/order/${id}`,reqBody,reqHeader)
+}

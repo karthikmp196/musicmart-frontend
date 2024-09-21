@@ -8,18 +8,21 @@ import { googleRegister, loginAPI } from '../services/appAPI';
 function Login() {
   const navigate = useNavigate()
 
+  const[userToken,setUserToken] = useState('')
+
 const [loginDetails,setLoginDetails] =useState({
   email:"",
   password:""
 })
 
-const[googleLoginDetails,setGoogleLoginDetails] = useState({
-  email:"",
-  fname:"",
-  lname:"",
-  profileimg:"",
-  googleID:""
-})
+const[googleLoginDetails,setGoogleLoginDetails] = useState()
+//   email:"",
+//    fname:"",
+//    lname:"",
+//    profileimg:"",
+//    googleID:""
+// })
+
 const display=async(e)=>{
 e.preventDefault()
 const{email,password} = loginDetails
@@ -52,19 +55,35 @@ else{
 
 }
 
-const googleDisplay=async(e)=>{
-const{email,fname,lname,profileimg,googleID} = googleLoginDetails
+const googleDisplay=async(glogin)=>{
+ const id = glogin.aud
+ const email = glogin.email
+  const fname = glogin.given_name
+  const lname = glogin.family_name
+  const profileimg = glogin.picture 
+  console.log(id,email,fname,lname,profileimg);
+  
 
-if(!email||!fname||!lname)
+if(!id||!email||!fname||!lname)
 {
-  alert("please fill the form")
+  alert("login failed")
 }
 else
   {
     
-    const googleLoginResult = await googleRegister(googleLoginDetails)
-    sessionStorage.setItem("data",JSON.stringify())
+    const googleLoginResult = await googleRegister(glogin)
+    // console.log(googleLoginResult);
+    
+    if(googleLoginResult.status == 200){
+       sessionStorage.setItem("data",JSON.stringify(googleLoginResult.data.user))
+       setUserToken(sessionStorage.setItem("token",googleLoginResult.data.token))
 
+
+       navigate("/")
+    }
+    else{
+      alert("buhgy")
+    }
 
   }
 
@@ -82,8 +101,9 @@ else
       
       <GoogleLogin
   onSuccess={credentialResponse => {
-    const token=jwtDecode(credentialResponse?.credential)
-    console.log(token);
+    const glogin=jwtDecode(credentialResponse?.credential)
+    console.log(glogin);
+     googleDisplay(glogin)
     
   }}
   onError={() => {
