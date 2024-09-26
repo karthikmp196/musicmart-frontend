@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import {Button, Container, Nav, Navbar} from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
+import {Badge, Button, Container, Modal, ModalBody, Nav, Navbar} from 'react-bootstrap'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { headerContext } from '../context/header'
+import { getFromCart } from '../services/appAPI'
 
 function Header() {
   const[token,setToken] = useState()
   const[userName,setUserName] = useState()
- 
+  const navigate = useNavigate()
+const{header,setHeader}= useContext(headerContext)
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const [show, setShow] = useState(false);
+  const[getProducts,setGetProducts]= useState([])
+
+  const[count,setCount]=useState(0)
   useEffect(()=>{
  const data = sessionStorage.getItem('token')
  setToken(data)
@@ -14,17 +23,76 @@ function Header() {
   const userDetails = JSON.parse(sessionStorage.getItem('data'))
     console.log(userDetails?.fname);
    setUserName(userDetails?.fname)
-  },[])
+  },[header])
 
- 
- 
+  const logout=()=>{
+    sessionStorage.clear()
+    setShow(false);
+    setHeader("Logout Successful")
+    navigate('/login')
+    
+  }
+
+  useEffect(()=>{
+  display()
+  },[getProducts])
+  
+  const display=async()=>{
+     const token = sessionStorage.getItem('token')
+    const data = JSON.parse(sessionStorage.getItem('data'))  
+    
+    if(token){
+      var reqHeader =
+      {
+      "Content-Type" : "application/json",
+      "Authorization" : `Bearer ${token}`
+      }
 
 
+
+      const result = await getFromCart(data._id,reqHeader)
+      setGetProducts(result?.data?.items)
+      setCount(getProducts?.length)
+    }
+    else{
+      alert("please login")
+      navigate('/login')
+    }
+  
+  }
+  
+  // console.log('items in headersss',getProducts);
+  // console.log('count',count);
   
 
+  
   return (
     <div>
       <div id='head'>
+
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Modal title</Modal.Title>
+        </Modal.Header>
+        <ModalBody></ModalBody>
+        <Modal.Footer>
+          <Button variant="secondary"onClick={logout} >
+          <i class="fa-solid fa-right-from-bracket"></i>
+          </Button>
+<Link to={'/profile'}>
+            <Button variant="primary" onClick={handleClose} >Edit profile</Button>
+  
+</Link>        </Modal.Footer>
+      </Modal>
+     
+
+
+
           <Navbar  expand="lg" className="bg-body-tertiary">
           <Container fluid>
            <Link style={{textDecoration:'none'}} to='/'><Navbar.Brand href="#"><i class="fa-solid fa-music"></i> Music Mart</Navbar.Brand></Link> 
@@ -43,9 +111,9 @@ function Header() {
 
                 
                 
-                <Link to={'/Cart'} ><Button style={{marginLeft:'30px',marginTop:'3px'}} variant="outline-primary"><i class="fa-solid fa-cart-shopping"></i></Button></Link>
+                <Link to={'/Cart'} ><Button style={{marginLeft:'30px',marginTop:'3px'}} variant="outline-primary"><i class="fa-solid fa-cart-shopping"></i>  <Badge bg="secondary">    {count}</Badge></Button></Link>
+
               </Nav>
-             <Link to={'/Profile'}> <Button style={{marginRight:'20px'}} variant="outline-primary"><i class="fa-solid fa-user"></i></Button></Link>
                
                
                
@@ -53,7 +121,7 @@ function Header() {
 
                 token?
 
-                (<Link to={'/profile'} ><Button   style={{marginRight:'20px'}} variant="outline-primary">{userName}</Button></Link>)
+                (<Button   style={{marginRight:'20px'}} variant="outline-primary" onClick={handleShow}>{userName}</Button>)
                
               :
               (                <Link to={'/Login'} ><Button   style={{marginRight:'20px'}} variant="outline-primary">Login </Button></Link>

@@ -46,6 +46,37 @@ export const googleRegister = async(user)=>{
     return await commonApi("POST",`${baseurl}/user/googleRegister`,user,"")
 }
 
-export const order= async(id,reqBody,reqHeader)=>{
-    return await commonApi("POST",`${baseurl}/user/order/${id}`,reqBody,reqHeader)
+export const order= async(uid,reqBody,reqHeader)=>{
+    return await commonApi("POST",`${baseurl}/user/order/${uid}`,reqBody,reqHeader)
+}
+
+export const orderDetails= async()=>{
+    return await commonApi("GET",`${baseurl}/admin/showorder`,"","")
+}
+
+export const UserorderDetails= async(uid)=>{
+    return await commonApi("GET",`${baseurl}/user/showorder/${uid}`,"","")
+}
+
+
+export const deleteProductAPI = async(id,reqHeader)=>{
+    return await commonApi("DELETE",`${baseurl}/user/deleteProduct/${id}`,{},reqHeader)
+}
+
+export const ForgetPasswordAPI = async(email)=>{
+    return await commonApi("POST",`${baseurl}/user/forget-password`,email,"")
+}
+
+export const updatePasswordAPI = async(token,password)=>{
+    return await commonApi("post",`${baseurl}/user/updatePassword`,{token,password} ,"")
+}
+
+
+export const showUsersAPI = async()=>{
+    return await commonApi("GET",`${baseurl}/admin/showUsers`,"","")
+}
+
+
+export const editProfileAPI=async(id,reqHeader)=>{
+    return await commonApi("PUT",`${baseurl}/user/editProfile/${id}`,{},reqHeader)
 }

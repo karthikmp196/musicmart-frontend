@@ -17,11 +17,18 @@ import Adminedit from './pages/Admin/Adminedit';
 import Userdetails from './pages/Admin/Userdetails';
 import Orderdetails from './pages/Admin/Orderdetails';
 import Profile from './pages/User/Profile';
+import Orders from './pages/User/Orders';
+import ResetPassword from './pages/User/ResetPassword';
+import ForgetPassword from './pages/User/ForgetPassword';
+import Productdetails from './pages/Admin/Productdetails';
+import Totalearnings from './pages/Admin/Totalearnings';
+import { HeaderProvider } from './context/header';
 
 
 function App() {
   return (
     <div className="App">
+      <HeaderProvider>
       <Header/> 
        <Routes>
         <Route path='/adminform' element={<Adminform/>}/>
@@ -38,9 +45,16 @@ function App() {
         <Route path='/Userdetails' element={<Userdetails/>}/>
         <Route path='/Orderdetails' element={<Orderdetails/>}/>
         <Route path='/Profile' element={<Profile/>}/>
+        <Route path='/userOrders' element={<Orders/>}/>
+        <Route path='/ResetPassword/:token' element={<ResetPassword/>}/>
+        <Route path='/ForgetPassword' element={<ForgetPassword/>}/>
+        <Route path='/productdetails' element={<Productdetails/>}/>
+<Route path='/Totalearnings'element={<Totalearnings/>} ></Route>
+
       </Routes> 
     
       <Footer/> 
+      </HeaderProvider>
       
       </div>  
   );

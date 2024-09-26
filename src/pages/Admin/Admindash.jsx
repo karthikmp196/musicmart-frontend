@@ -3,6 +3,8 @@ import {   Col, Nav, Row, Tab, Tabs } from 'react-bootstrap'
 import Adminform from './Adminform'
 import Userdetails from './Userdetails'
 import Orderdetails from './Orderdetails'
+import Productdetails from './Productdetails'
+import Totalearnings from './Totalearnings'
 
 function Admindash() {
   const[key,setKey]=useState("")
@@ -48,9 +50,9 @@ function Admindash() {
         <Col sm={9}>
           <Tab.Content>
             <Tab.Pane eventKey="first"><Userdetails/></Tab.Pane>
-            <Tab.Pane eventKey="second"></Tab.Pane>
+            <Tab.Pane eventKey="second"><Productdetails/></Tab.Pane>
             <Tab.Pane eventKey="Third"><Orderdetails/></Tab.Pane>
-
+<Tab.Pane eventKey="four"><Totalearnings/></Tab.Pane>
           </Tab.Content>
         </Col>
         </Row>
@@ -60,9 +62,9 @@ function Admindash() {
       <Tab eventKey="product" title="Products +" >
         <Adminform/>
       </Tab>
-      <Tab eventKey="orders" title="Orders" >
+      {/* <Tab eventKey="orders" title="Orders" >
       
-      </Tab>
+      </Tab> */}
     </Tabs>
       </div>
     </div>

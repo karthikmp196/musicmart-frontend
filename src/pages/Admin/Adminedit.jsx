@@ -34,7 +34,7 @@ useEffect(()=>{
 
 const updateProduct=async(e)=>{
   e.preventDefault()
-  const{id,pname,category,productimage,description,} = editProduct
+  const{id,pname,category,productimage,description} = editProduct
 if(!id||!pname||!category||!description){
   alert("please enter the form")
 }

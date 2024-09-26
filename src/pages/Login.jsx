@@ -1,14 +1,17 @@
 import { GoogleLogin } from '@react-oauth/google';
 import jwtDecode from 'jwt-decode';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Form } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { googleRegister, loginAPI } from '../services/appAPI';
+import { headerContext } from '../context/header';
 
 function Login() {
   const navigate = useNavigate()
 
   const[userToken,setUserToken] = useState('')
+
+  const{setHeader} = useContext(headerContext)
 
 const [loginDetails,setLoginDetails] =useState({
   email:"",
@@ -35,7 +38,7 @@ else{
    if(loginResult.status==200)
    {
    alert("Login successfull")
-   
+   setHeader(loginResult)
    sessionStorage.setItem("data",JSON.stringify(loginResult.data.userExist))
    sessionStorage.setItem("token",loginResult.data.token)
    if(loginResult.data.userExist.role == 1)
@@ -43,7 +46,7 @@ else{
     navigate('/Admindash')
    }
    else{
-    navigate('/Home')
+    navigate('/')
    }
    
    }
@@ -75,8 +78,10 @@ else
     // console.log(googleLoginResult);
     
     if(googleLoginResult.status == 200){
+      setHeader(googleLoginResult)
        sessionStorage.setItem("data",JSON.stringify(googleLoginResult.data.user))
        setUserToken(sessionStorage.setItem("token",googleLoginResult.data.token))
+
 
 
        navigate("/")
@@ -110,7 +115,7 @@ else
     console.log('Login Failed');
   }}
 />
-     <br /> <a style={{textDecoration:'none'}} href="">Forget password?</a> <br />
+     <br /><Link to={'/ForgetPassword'}> <a style={{textDecoration:'none'}} href="">Forget password?</a> </Link><br />
      <div> Dont have an account?
 
      <Link to={'/Register'} ><a style={{textDecoration:'none'}} href="">Create account</a></Link>
