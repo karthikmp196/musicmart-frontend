@@ -2,33 +2,28 @@ import React, { useEffect, useState } from 'react'
 import { Button, Col, Container, Form, Image } from 'react-bootstrap'
 
 
-function Profile({users1}) {
+function Profile() {
 const [userName,setUserName] = useState()
 const[token,setToken] = useState()
 const[email,setEmail] = useState()
 const[profile,setProfile]= useState()
 const[preview,setPreview] = useState(null)
-
+const[userData,setUserData]=useState()
 useEffect(()=>{
-  const data = sessionStorage.getItem('token')
-  setToken(data)
-
-const userData=JSON.parse(sessionStorage.getItem('data'))
-setUserName(userData?.fname)
-setProfile(userData?.profileimg)
-setEmail(userData?.email)
-// console.log(userData);
-
-
+  const tok = sessionStorage.getItem('token')
+  setToken(tok)
+const data=JSON.parse(sessionStorage.getItem('data'))
+setUserData(data)
+console.log(userData);
 },[])
 
 const[editProfile,setEditProfile] = useState({
   // id:users1?._id,
-  fname:users1?.fname,
-  lname:users1?.lname,
-   profileimg:users1?.profileimg,
-  address:users1?.address
-
+  fname:userData?.fname,
+  lname:userData?.lname,
+   profileimg:userData?.profileimg,
+  address:userData?.address
+  
 })   
 
 
@@ -41,18 +36,18 @@ useEffect(()=>{
 
 const updateProfile=async(e)=>{
   e.preventDefault()
-  const{id,fname,lname,address,profileimg} = editProfile
-if(!id||!fname||!lname||!address||!profileimg){
+  const{fname,lname,address,profileimg} = editProfile
+if(!fname||!lname||!address){
   alert("please enter the form")
 }
 else{
   const reqBody = new FormData()
-  reqBody.append("id",id)
+  // reqBody.append("id",id)
 
-  reqBody.append("fname",users1.fname)
-  reqBody.append("lname",users1.lname)
-  preview? reqBody.append("profileimg",profileimg): reqBody.append("profileimg",users1.profileimg)
-  reqBody.append("address",users1.address)
+  reqBody.append("fname",userData.fname)
+  reqBody.append("lname",userData.lname)
+  preview? reqBody.append("profileimg",profileimg): reqBody.append("profileimg",userData.profileimg)
+  reqBody.append("address",userData.address)
 
  if(token){
   var reqHeader = {
@@ -61,7 +56,7 @@ else{
   }
  }
 
- const result = await editProfile(id,reqBody,reqHeader)
+ const result = await editProfile(userData?._id,reqBody,reqHeader)
  console.log(result);
 
  if(result.status == 200){
@@ -76,7 +71,7 @@ else{
 
 }
 }
-console.log(editProfile);
+
 
 
   return (
@@ -96,7 +91,7 @@ console.log(editProfile);
 
                   <Form.Control style={{marginTop:'20px'}} value={email} className='w-75' type="email" placeholder="Email" disabled/> 
                   <Form.Control style={{marginTop:'20px'}} value={editProfile?.address} className='w-75' type="text" placeholder="Address" onChange={(e)=>setEditProfile({...editProfile,address:e.target.value})}/> 
-                  <Button  style={{margin:'20px'}} variant="primary" >submit</Button>
+                  <Button  style={{margin:'20px'}} variant="primary" onClick={(e)=>updateProfile(e)} >submit</Button>
 
               </>)
                 : 
@@ -108,7 +103,7 @@ console.log(editProfile);
 
                   <Form.Control style={{marginTop:'20px'}}  className='w-75' type="text" placeholder="Email" disabled/> 
                   <Form.Control style={{marginTop:'20px'}} value={editProfile?.address} className='w-75' type="text" placeholder="Address" onChange={(e)=>setEditProfile({...editProfile,address:e.target.value})}/> 
-                  <Button  style={{margin:'20px'}} variant="primary" >submit</Button>
+                  <Button  style={{margin:'20px'}} variant="primary" onClick={(e)=>updateProfile(e)} >submit</Button>
 
                 </>)
 

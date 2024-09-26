@@ -35,7 +35,7 @@ const{header,setHeader}= useContext(headerContext)
 
   useEffect(()=>{
   display()
-  },[getProducts])
+  },[header])
   
   const display=async()=>{
      const token = sessionStorage.getItem('token')
@@ -47,15 +47,11 @@ const{header,setHeader}= useContext(headerContext)
       "Content-Type" : "application/json",
       "Authorization" : `Bearer ${token}`
       }
-
-
-
       const result = await getFromCart(data._id,reqHeader)
       setGetProducts(result?.data?.items)
       setCount(getProducts?.length)
     }
     else{
-      alert("please login")
       navigate('/login')
     }
   
@@ -77,7 +73,7 @@ const{header,setHeader}= useContext(headerContext)
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title>Music Mart</Modal.Title>
         </Modal.Header>
         <ModalBody></ModalBody>
         <Modal.Footer>
@@ -111,7 +107,7 @@ const{header,setHeader}= useContext(headerContext)
 
                 
                 
-                <Link to={'/Cart'} ><Button style={{marginLeft:'30px',marginTop:'3px'}} variant="outline-primary"><i class="fa-solid fa-cart-shopping"></i>  <Badge bg="secondary">    {count}</Badge></Button></Link>
+                <Link to={'/Cart'} ><Button style={{marginLeft:'30px',marginTop:'3px'}} variant="outline-primary"><i class="fa-solid fa-cart-shopping"></i>  <Badge bg="secondary">{count}</Badge></Button></Link>
 
               </Nav>
                

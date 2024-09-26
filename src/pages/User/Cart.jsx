@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Card, Col, Modal, ModalBody, Row } from 'react-bootstrap'
 import { deleteProductAPI, getFromCart, order, removeFromCart } from '../../services/appAPI'
 import { baseurl } from '../../services/Baseurl'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { headerContext } from '../../context/header'
 
 
 
 function Cart() {
-
+  const{setHeader}= useContext(headerContext)
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [show, setShow] = useState(false);
@@ -33,7 +34,7 @@ const display=async()=>{
     "Authorization" : `Bearer ${token}`
     }
     const result = await getFromCart(data._id,reqHeader)
-   
+    setHeader(result?.data)
     setGetProducts(result?.data?.items)
   
   }
@@ -60,6 +61,7 @@ if(delToken){
     "Authorization" : `Bearer ${delToken}`
   }
 const res= await removeFromCart(delData._id,pid,reqHeader)
+setHeader(res)
 if(res.status==200){
   alert("product deleted")
   display()
@@ -81,7 +83,7 @@ const totalSum=()=>{
 
 useEffect(()=>{
   totalSum()
-},[display])
+},[getProducts])
 
 
 
@@ -102,6 +104,7 @@ const clear=async()=>{
       "Authorization" : `Bearer ${token}`
     }
       const result=  await deleteProductAPI(uid._id,reqHeader)
+      setHeader(result)
       console.log(result);
     if(result.status==200)
     {
@@ -191,7 +194,7 @@ const paymentObject = new window.Razorpay(options)
 paymentObject.open()
 
 }
-console.log(ResponseId);
+// console.log(ResponseId);
 
 
 const placeOrder=async(id)=>{  

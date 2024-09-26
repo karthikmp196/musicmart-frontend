@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Card, Col, Form, Row } from 'react-bootstrap'
 import { addToCartAPI, getProduct } from '../../services/appAPI'
 import { baseurl } from '../../services/Baseurl'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { headerContext } from '../../context/header'
 
 function Product() {
 const navigate = useNavigate()
+const{setHeader}= useContext(headerContext)
 
   const [products,setProducts] = useState("")
 useEffect(()=>{
@@ -13,7 +15,6 @@ useEffect(()=>{
 },[])
 
 const[pcount,setPcount] = useState(1) 
-
  const[selectProduct,setSelectProduct] = useState("")
  
 
@@ -51,6 +52,7 @@ if(userToken)
   "Authorization" : `Bearer ${userToken}`
   }
   const result = await addToCartAPI(data._id,reqBody,reqHeader)
+  setHeader(result)
   
   if(result.status==200)
  {
