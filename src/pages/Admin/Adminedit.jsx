@@ -82,7 +82,7 @@ else{
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title>Edit Product</Modal.Title>
         </Modal.Header>
         <Modal.Body>
         <InputGroup className="mb-3"></InputGroup>

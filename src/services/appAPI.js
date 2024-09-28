@@ -80,3 +80,12 @@ export const showUsersAPI = async()=>{
 export const editProfileAPI=async(id,reqHeader)=>{
     return await commonApi("PUT",`${baseurl}/user/editProfile/${id}`,{},reqHeader)
 }
+
+
+export const otpVerificationAPI=async(reqBody)=>{
+    return await commonApi("POST",`${baseurl}/user/otpVerify`,reqBody,{})
+}
+
+export const otpResendAPI=async(reqBody)=>{
+    return await commonApi("POST",`${baseurl}/user/otpResend`,reqBody,{})
+}

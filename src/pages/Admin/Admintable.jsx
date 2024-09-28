@@ -54,7 +54,7 @@ const deleteProducts = async(id)=>{
     
 
     
-       <div>
+       <div style={{height:'500px'}}>
       <Table responsive="sm">
         <thead>
           <tr>

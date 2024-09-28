@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Col, Container, Form, Image } from 'react-bootstrap'
+import { Button, Col, Container, Form, Image, InputGroup } from 'react-bootstrap'
+import { baseurl } from '../../services/Baseurl'
+import { editProfileAPI } from '../../services/appAPI'
 
 
 function Profile() {
-const [userName,setUserName] = useState()
+// const [userName,setUserName] = useState()
 const[token,setToken] = useState()
 const[email,setEmail] = useState()
-const[profile,setProfile]= useState()
+// const[profile,setProfile]= useState()
 const[preview,setPreview] = useState(null)
 const[userData,setUserData]=useState()
 useEffect(()=>{
@@ -18,57 +20,71 @@ console.log(userData);
 },[])
 
 const[editProfile,setEditProfile] = useState({
-  // id:users1?._id,
-  fname:userData?.fname,
-  lname:userData?.lname,
-   profileimg:userData?.profileimg,
-  address:userData?.address
+  // fname:userData?.fname,
+  // lname:userData?.lname,
+  // phone:userData?.phone,
+  // address:userData?.address,
+  // profileimg:userData?.profileimg,
+  fname:JSON.parse(sessionStorage.getItem('data')).fname,
+  lname:JSON.parse(sessionStorage.getItem('data')).lname,
+  address:JSON.parse(sessionStorage.getItem('data')).address,
+  phone:JSON.parse(sessionStorage.getItem('data')).phone,
+
+
+
+
   
 })   
+
+console.log(editProfile);
+
 
 
 useEffect(()=>{
   if(editProfile.profileimg){
-    setPreview(URL.createObjectURL(editProfile.profileimg))
+    setPreview(URL.createObjectURL(userData?.profileimg))
   }
-},[editProfile.profileimg])
+},[editProfile?.profileimg])
 
 
 const updateProfile=async(e)=>{
   e.preventDefault()
-  const{fname,lname,address,profileimg} = editProfile
-if(!fname||!lname||!address){
+  const{fname,lname,address,phone,profileimg} = editProfile
+if(!fname||!lname||!address||!phone){
   alert("please enter the form")
 }
 else{
+  if(!token)
+  {
+    alert("Not logged in")
+  }
+  else{
+      var reqHeader = {
+        "Content-Type": "multipart/form-data",
+        "Authorization":`Bearer ${token}`
+      }
   const reqBody = new FormData()
-  // reqBody.append("id",id)
-
   reqBody.append("fname",userData.fname)
   reqBody.append("lname",userData.lname)
-  preview? reqBody.append("profileimg",profileimg): reqBody.append("profileimg",userData.profileimg)
+  reqBody.append("phone",userData.phone)
   reqBody.append("address",userData.address)
+  preview? reqBody.append("profileimg",userData.profileimg): reqBody.append("profileimg",userData.profileimg)
 
- if(token){
-  var reqHeader = {
-    "Content-Type": "multipart/form-data",
-    "Authorization":`Bearer ${token}`
-  }
- }
-
- const result = await editProfile(userData?._id,reqBody,reqHeader)
+ 
+ const result = await editProfileAPI(userData?._id,reqBody,reqHeader)
  console.log(result);
 
  if(result.status == 200){
-  setEditProfile('')
   alert('profile updated successfully')
-  
- }
+  sessionStorage.setItem('data',JSON.stringify(result.data))
+ 
+}
  else{
   alert("incorrect data entry")
  }
  
 
+}
 }
 }
 
@@ -84,24 +100,36 @@ else{
               token?
               (<>
                 
-                  <Image style={{marginTop:'10px',width:'30%'}} src= "profile"  roundedCircle />
-                
-                  <Form.Control style={{marginTop:'20px'}} value={editProfile?.fname}  className='w-75' type="text" placeholder="Username" onChange={(e)=>setEditProfile({...editProfile,fname:e.target.value})} /> 
-                  <Form.Control style={{marginTop:'20px'}} value={editProfile?.lname}  className='w-75' type="text" placeholder="Username" onChange={(e)=>setEditProfile({...editProfile,lname:e.target.value})} /> 
+                <InputGroup className='mb-3'>
+           <label>
+          <input type="file"  style={{display:'none'}}  onChange={(e)=>setEditProfile({...editProfile,profileimg:e.target.files[0]})}/>
+          <img src={preview?preview: `${baseurl}/uploads/${userData.profileimg}`} alt="" style={{width:"30%"}} />
+           </label>
+           </InputGroup>
+                  <Form.Control style={{marginTop:'20px'}} value={editProfile?.fname}  className='w-75' type="text" placeholder="fname" onChange={(e)=>setEditProfile({...editProfile,fname:e.target.value})} /> 
+                  <Form.Control style={{marginTop:'20px'}} value={editProfile?.lname}  className='w-75' type="text" placeholder="lname" onChange={(e)=>setEditProfile({...editProfile,lname:e.target.value})} /> 
 
-                  <Form.Control style={{marginTop:'20px'}} value={email} className='w-75' type="email" placeholder="Email" disabled/> 
+                  <Form.Control style={{marginTop:'20px'}} value={userData?.email} className='w-75' type="email" placeholder="Email" disabled/> 
+                  <Form.Control style={{marginTop:'20px'}} value={editProfile?.phone} className='w-75' type="text" placeholder="Phone" onChange={(e)=>setEditProfile({...editProfile,phone:e.target.value})}/> 
                   <Form.Control style={{marginTop:'20px'}} value={editProfile?.address} className='w-75' type="text" placeholder="Address" onChange={(e)=>setEditProfile({...editProfile,address:e.target.value})}/> 
                   <Button  style={{margin:'20px'}} variant="primary" onClick={(e)=>updateProfile(e)} >submit</Button>
 
               </>)
                 : 
                 (<>
-                  <Image style={{marginTop:'10px',width:'30%'}} src="https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Clipart.png"  roundedCircle />
                   
-                  <Form.Control style={{marginTop:'20px'}}  value={editProfile?.fname}   className='w-75' type="text" placeholder="Username" onChange={(e)=>setEditProfile({...editProfile,fname:e.target.value})} /> 
-                  <Form.Control style={{marginTop:'20px'}}  value={editProfile?.lname}   className='w-75' type="text" placeholder="Username" onChange={(e)=>setEditProfile({...editProfile,lname:e.target.value})} /> 
+                  <InputGroup className='mb-3'>
+           <label>
+          <input type="file"  style={{display:'none'}}  onChange={(e)=>setEditProfile({...editProfile,profileimg:e.target.files[0]})}/>
+          <img src={preview?preview: `${baseurl}/uploads/${editProfile.profileimg}`} alt="" style={{width:"30%"}} />
+           </label>
+           </InputGroup>
+                  <Form.Control style={{marginTop:'20px'}}  value={editProfile?.fname}   className='w-75' type="text" placeholder="fname" onChange={(e)=>setEditProfile({...editProfile,fname:e.target.value})} /> 
+                  <Form.Control style={{marginTop:'20px'}}  value={editProfile?.lname}   className='w-75' type="text" placeholder="lname" onChange={(e)=>setEditProfile({...editProfile,lname:e.target.value})} /> 
 
-                  <Form.Control style={{marginTop:'20px'}}  className='w-75' type="text" placeholder="Email" disabled/> 
+                  <Form.Control style={{marginTop:'20px'}} value={editProfile?.email} className='w-75' type="text" placeholder="Email" disabled/> 
+                  <Form.Control style={{marginTop:'20px'}} value={editProfile?.phone} className='w-75' type="text" placeholder="Phone" onChange={(e)=>setEditProfile({...editProfile,phone:e.target.value})}/> 
+
                   <Form.Control style={{marginTop:'20px'}} value={editProfile?.address} className='w-75' type="text" placeholder="Address" onChange={(e)=>setEditProfile({...editProfile,address:e.target.value})}/> 
                   <Button  style={{margin:'20px'}} variant="primary" onClick={(e)=>updateProfile(e)} >submit</Button>
 
@@ -120,3 +148,5 @@ else{
 }
 
 export default Profile
+
+

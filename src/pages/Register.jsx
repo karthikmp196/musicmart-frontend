@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Button, FloatingLabel, Form, InputGroup } from 'react-bootstrap'
-import { registerAPI } from '../services/appAPI'
+import { Button, FloatingLabel, Form, InputGroup, Modal, Row } from 'react-bootstrap'
+import { otpResendAPI, otpVerificationAPI, registerAPI } from '../services/appAPI'
 import { useNavigate } from 'react-router-dom'
+import Otp from './User/Otp'
 
 function Register() {
   const navigate = useNavigate()
+ 
 
   const [data,setData] = useState({
     fname:'',
@@ -15,14 +17,18 @@ function Register() {
   })
 
 // console.log(data);
+const[otpVerify,setOtpVerify]=useState({
+  email:'',
+  otp:''
+})
+
+const [show, setShow] = useState(false);
+
+const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
 
-
-  const[fname,setFname] = useState("")
-  const[lname,setLname] = useState("")
-  const[email,setEmail] = useState("")
-  const[password,setPassword]=useState("")
-  const[phone,setPhone]=useState("")
+ 
   // const[isfnamevalid,setIsfnamevalid] = useState(true)
   // const[islnamevalid,setIslnamevalid] = useState(true)
   // const[isemailvalid,setEmailvalid] = useState(true)
@@ -100,6 +106,7 @@ function Register() {
               
     // }
 
+   
 
 const display=async(e)=>{
   e.preventDefault()
@@ -112,8 +119,10 @@ const display=async(e)=>{
     const result=await registerAPI(data)
   if(result.status==200)
   {
+   
     alert("registration successfull")
-    navigate('/login')
+    handleShow()
+    // navigate('/login')
   }
   else{
     if(result.status==406)
@@ -129,6 +138,45 @@ const display=async(e)=>{
   
   }
 }
+
+
+const otpVerification = async(e)=>{
+  const{email,otp} = otpVerify 
+  if(!email||!otp)
+  {
+      alert("please enter the fields")
+  }
+  else{
+          const res = await otpVerificationAPI(otpVerify)
+          console.log(res);
+          if(res.status==200)
+          {
+              alert("Email is verified")
+              handleClose()
+              navigate('/')
+          }
+          else{
+            alert("otp mismatch")
+          }
+      }
+  
+}
+console.log(otpVerify);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div id='register'>
@@ -157,6 +205,48 @@ const display=async(e)=>{
         <Button  variant="primary" onClick={display}>Submit</Button>
 
         </div>
+
+
+
+
+        <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Email verification</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <InputGroup className="mb-3"></InputGroup>
+        <Form.Control
+          aria-label="Default"
+          aria-describedby="inputGroup-sizing-default"
+          placeholder='Email'
+           value={otpVerify.email}
+           onChange={(e)=>setOtpVerify({...otpVerify,email:e.target.value})}
+            />
+             <InputGroup className="mb-3"></InputGroup>
+        <Form.Control
+          aria-label="Default"
+          aria-describedby="inputGroup-sizing-default"
+          placeholder='OTP'
+           value={otpVerify.otp}
+           onChange={(e)=>setOtpVerify({...otpVerify,otp:e.target.value})}
+            />
+<br />
+         
+            <Button style={{width:'40%'}} variant="primary" onClick={(e)=>otpVerification(e)}> Verify</Button>
+            
+            <br />
+         
+            <Otp/>
+ </Modal.Body>
+ </Modal>
+
+
+
      
     </div>
   )

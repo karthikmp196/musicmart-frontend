@@ -250,7 +250,7 @@ if(id){
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title>Place order</Modal.Title>
         </Modal.Header>
         <ModalBody>Total:{sum}</ModalBody>
         <Modal.Footer>
